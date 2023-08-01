@@ -1,0 +1,27 @@
+clear arduinoObj; clear ultrasonicObj;
+
+arduinoObj= arduino('COM7', 'Uno',"Libraries","Ultrasonic"); %connect the arduino board
+
+ultrasonicObj = ultrasonic(arduinoObj,'D7','D8'); %connect the ultrasonic object
+
+%set up the contor for the loop that mesure te time for flying mode
+start=0;
+stop=0; 
+
+%measuring the time the drone flies from the button to the ultrasonic sensor
+while stop==0
+    position=readDigitalPin(arduinoObj,'D2');
+    if position==0 && start==0
+        time_1=datetime; %time of take off
+        start=1;
+    end
+
+    distance = readDistance(ultrasonicObj);
+    if distance ~= Inf
+        time_2=datetime; %landing time
+        stop=1;
+    end
+end
+
+time=time_2-time_1; %time of the flying
+
